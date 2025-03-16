@@ -4,10 +4,11 @@ from typing import Any, Optional
 import pandas as pd
 from pathlib import Path
 
+database_path = Path(__file__).parent / "finance_tracker.db"
 
 # Database setup
 def init_db() -> sqlite3.Connection:
-    conn = sqlite3.connect(Path(__file__).parent / "finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
 
     # Create tables if they don't exist
@@ -59,7 +60,7 @@ def init_db() -> sqlite3.Connection:
 def add_transaction(
     date: str, amount: float, category: str, description: str, transaction_type: str
 ) -> None:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     c.execute(
         "INSERT INTO transactions (date, amount, category, description, transaction_type) VALUES (?, ?, ?, ?, ?)",
@@ -70,7 +71,7 @@ def add_transaction(
 
 
 def get_transaction_by_id(transaction_id: int) -> Optional[dict[str, Any]]:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     c.execute("SELECT * FROM transactions WHERE id = ?", (transaction_id,))
     transaction = c.fetchone()
@@ -95,7 +96,7 @@ def update_transaction(
     description: str,
     transaction_type: str,
 ) -> None:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     c.execute(
         "UPDATE transactions SET date = ?, amount = ?, category = ?, description = ?, transaction_type = ? WHERE id = ?",
@@ -106,7 +107,7 @@ def update_transaction(
 
 
 def delete_transaction(transaction_id: int) -> None:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     c.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
     conn.commit()
@@ -119,7 +120,7 @@ def get_transactions(
     category: Optional[str] = None,
     transaction_type: Optional[str] = None,
 ) -> pd.DataFrame:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     query = "SELECT * FROM transactions WHERE 1=1"
     params: list[str] = []
 
@@ -147,7 +148,7 @@ def get_transactions(
 
 
 def get_categories(type: Optional[str] = None) -> list[str]:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
 
     if type:
@@ -161,7 +162,7 @@ def get_categories(type: Optional[str] = None) -> list[str]:
 
 
 def add_category(name: str, type: str) -> bool:
-    conn = sqlite3.connect("finance_tracker.db")
+    conn = sqlite3.connect(database_path)
     c = conn.cursor()
     try:
         c.execute("INSERT INTO categories (name, type) VALUES (?, ?)", (name, type))
