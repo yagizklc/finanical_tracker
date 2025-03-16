@@ -30,7 +30,7 @@ uv sync
 3. Run the application:
 
 ```bash
-python run.py
+streamlit run app/main.py
 ```
 
 ## Usage
